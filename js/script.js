@@ -7,7 +7,7 @@
   $(document).ready(function(){
 
     var fgColors = ["white", "blue", "green", "red", "darkblue", "brown", "cyan", "black", "gray"];
-    var bgColors = ["black"];
+    var bgColors = ["black", "#eee", "#eee", "#eee", "#eee", "#eee", "#eee", "#eee", "#eee"];
 
     var nMines = 10;
     var boardSize = 8;
@@ -72,25 +72,35 @@
 
     // Click on any field to reveal the number or the mine
     $board.find("td").on("click", function() {
-      var posX = $(this).index();
-      var posY = $(this).parent().index();
+      //var posX = $(this).index();
+      //var posY = $(this).parent().index();
       //alert("Pos "+posX+","+posY);
+      showField($(this));
 
-      $(this).text($(this).data("mines")).css({
-        "color": fgColors[$(this).data("mines")],
-        "background-color": bgColors[$(this).data("mines")]
-      });
     });
 
     // Reveal al the board
     $("h1").on("click", function() {
       $board.find("td").each(function(index) {
-        $(this).text($(this).data("mines")).css({
-          "color": fgColors[$(this).data("mines")],
-          "background-color": bgColors[$(this).data("mines")]
-        });
+        showField($(this));
       });
     });
+
+    /*
+     * Show what's hidden behind a field (a mine, a number or a void)
+     */
+    function showField($field) {
+      if(typeof $field.data("mines") != "undefined") {
+        $field.text($field.data("mines")).css({
+          "color": fgColors[$field.data("mines")],
+          "background-color": bgColors[$field.data("mines")]
+        });
+      } else {
+        $field.text($field.data("mines")).css({
+          "background-color": "#eee"
+        });
+      }
+    }
 
   });
 
