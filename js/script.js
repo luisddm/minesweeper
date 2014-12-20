@@ -37,8 +37,9 @@
     for(i = 0; i < boardSize; i++) {
       for(j = 0; j < boardSize; j++) {
         var total = 0;
-        var $central = $board.find("tr").eq(i).find("td").eq(j);
-        if($central.data("mines") !== 0) {
+        var $field = $board.find("tr").eq(i).find("td").eq(j);
+        $field.data("revealed", false);
+        if($field.data("mines") !== 0) {
           if(i-1 >= 0 && j-1 >= 0) {
             if($board.find("tr").eq(i-1).find("td").eq(j-1).data("mines") === 0) total++;
           }
@@ -64,42 +65,149 @@
             if($board.find("tr").eq(i+1).find("td").eq(j+1).data("mines") === 0) total++;
           }
           if(total > 0){
-            $central.data("mines", total);
+            $field.data("mines", total);
           }
         }
       }
     }
 
-    // Click on any field to reveal the number or the mine
-    $board.find("td").on("click", function() {
-      //var posX = $(this).index();
-      //var posY = $(this).parent().index();
-      //alert("Pos "+posX+","+posY);
-      showField($(this));
-
-    });
-
-    // Reveal al the board
+    // Reveal al the board (PROVISIONAL)
     $("h1").on("click", function() {
       $board.find("td").each(function(index) {
-        showField($(this));
+        revealField($(this));
       });
     });
 
     /*
-     * Show what's hidden behind a field (a mine, a number or a void)
-     */
-    function showField($field) {
+    * Reveal all the fields containing a mine
+    */
+    function revealAllMines() {
+      for(i = 0; i < boardSize; i++) {
+        for(j = 0; j < boardSize; j++) {
+          var $field = $board.find("tr").eq(i).find("td").eq(j);
+          if($field.data("mines") === 0) {
+            revealField($field);
+          }
+        }
+      }
+      $board.find("td").unbind("click");
+    }
+
+    /*
+    * Show what's hidden behind a field (a mine, a number or a void)
+    */
+    function revealField($field) {
+      $field.text($field.data("mines")).data("revealed", true);
       if(typeof $field.data("mines") != "undefined") {
-        $field.text($field.data("mines")).css({
+        $field.css({
           "color": fgColors[$field.data("mines")],
           "background-color": bgColors[$field.data("mines")]
         });
       } else {
-        $field.text($field.data("mines")).css({
+        $field.css({
           "background-color": "#eee"
         });
       }
+    }
+
+    // Click on any field to reveal the number or the mine
+    $board.find("td").on("click", function() {
+      var $field = $(this);
+      if($field.data("mines") === 0) {
+        revealAllMines();
+      } else if(typeof $field.data("mines") !== "undefined") {
+        revealField($field);
+      } else {
+        revealField($field);
+
+        var f=[], g, k, l, n=0;
+        f[n] = getVoidsAround($field);
+
+        do {
+          f[n+1] = [];
+          for(k=0; k<f[n].length; k++) {
+            g = getVoidsAround($board.find("tr").eq(f[n][k].x).find("td").eq(f[n][k].y));
+            for(l=0; l<g.length; l++) {
+              f[n+1].push(g[l]);
+            }
+          }
+          console.log(JSON.stringify(f[n+1]));
+          n++;
+        } while (f[n].length > 0);
+
+      }
+
+    });
+
+    /*
+     * Reveal all the fields around a given one and return the voids around
+     */
+    function getVoidsAround($field) {
+      // Get indices of the field
+      var i = $field.parent().index();
+      var j = $field.index();
+
+      // Create an array which will contain the empty fields
+      var $voids = [];
+
+      // Reveal all the adjacent fields (when exist) and search for voids
+      if(i-1 >= 0 && j-1 >= 0) {
+        var $field1 = $board.find("tr").eq(i-1).find("td").eq(j-1);
+        if(typeof $field1.data("mines") == "undefined" && $field1.data("revealed") === false) {
+          $voids.push({"x":i-1, "y":j-1});
+        }
+        revealField($field1);
+      }
+      if(i-1 >= 0) {
+        var $field2 = $board.find("tr").eq(i-1).find("td").eq(j);
+        if(typeof $field2.data("mines") == "undefined" && $field2.data("revealed") === false) {
+          $voids.push({"x":i-1, "y":j});
+        }
+        revealField($field2);
+      }
+      if(i-1 >= 0 && j+1 <= boardSize) {
+        var $field3 = $board.find("tr").eq(i-1).find("td").eq(j+1);
+        if(typeof $field3.data("mines") == "undefined" && $field3.data("revealed") === false) {
+          $voids.push({"x":i-1, "y":j+1});
+        }
+        revealField($field3);
+      }
+      if(j-1 >= 0) {
+        var $field4 = $board.find("tr").eq(i).find("td").eq(j-1);
+        if(typeof $field4.data("mines") == "undefined" && $field4.data("revealed") === false) {
+          $voids.push({"x":i, "y":j-1});
+        }
+        revealField($field4);
+      }
+      if(j+1 <= boardSize) {
+        var $field5 = $board.find("tr").eq(i).find("td").eq(j+1);
+        if(typeof $field5.data("mines") == "undefined" && $field5.data("revealed") === false) {
+          $voids.push({"x":i, "y":j+1});
+        }
+        revealField($field5);
+      }
+      if(i+1 <= boardSize && j-1 >= 0) {
+        var $field6 = $board.find("tr").eq(i+1).find("td").eq(j-1);
+        if(typeof $field6.data("mines") == "undefined" && $field6.data("revealed") === false) {
+          $voids.push({"x":i+1, "y":j-1});
+        }
+        revealField($field6);
+      }
+      if(i+1 <= boardSize) {
+        var $field7 = $board.find("tr").eq(i+1).find("td").eq(j);
+        if(typeof $field7.data("mines") == "undefined" && $field7.data("revealed") === false) {
+          $voids.push({"x":i+1, "y":j});
+        }
+        revealField($field7);
+      }
+      if(i+1 <= boardSize && j+1 <= boardSize) {
+        var $field8 = $board.find("tr").eq(i+1).find("td").eq(j+1);
+        if(typeof $field8.data("mines") == "undefined" && $field8.data("revealed") === false) {
+          $voids.push({"x":i+1, "y":j+1});
+        }
+        revealField($field8);
+      }
+      return $voids;
     }
 
   });
