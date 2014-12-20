@@ -16,7 +16,7 @@
     var $board = $(".board");
     var $time = $(".time");
 
-    setInterval(function() {
+    var timer = setInterval(function() {
       $time.text(+$time.text() + 1);
     }, 1000);
 
@@ -91,6 +91,7 @@
         }
       }
       $board.find("td").unbind("click");
+      clearInterval(timer);
     }
 
     /*
