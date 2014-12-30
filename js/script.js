@@ -1,5 +1,3 @@
-/*! luisddm/minesweeper v0.1 | (c) 2014 https://github.com/luisddm/minesweeper | GNU GPL License */
-
 (function($) {
 
   "use strict";
@@ -16,6 +14,7 @@
     var $board = $(".board");
     var $time = $(".time");
 
+    // Start a counter in seconds
     var timer = setInterval(function() {
       $time.text(+$time.text() + 1);
     }, 1000);
@@ -26,14 +25,16 @@
       var y = randomNumber(boardSize);
 
       var $cell = $board.find("tr").eq(y).find("td").eq(x);
-      var content = $cell.data("mines");
-      if(content !== 0) {
+
+      // Place a mine in the generated position only if there is no mine previously placed
+      if($cell.data("mines") !== 0) {
         $cell.data("mines", 0);
         n++;
       }
     }
 
-    // Look all the fields one by one searching for how many mines are around
+    // For each field look all around searching for how many mines are, and set this
+    // number as a data value
     for(i = 0; i < boardSize; i++) {
       for(j = 0; j < boardSize; j++) {
         var total = 0;
@@ -71,7 +72,7 @@
       }
     }
 
-    // Reveal al the board (PROVISIONAL)
+    // Reveal al the board (PROVISIONAL, only for debug purposes)
     $("h1").on("click", function() {
       $board.find("td").each(function(index) {
         revealField($(this));
@@ -95,7 +96,7 @@
     }
 
     /*
-    * Show what's hidden behind a field (a mine, a number or a void)
+    * Show what's hidden behind a field (a mine, a number or an empty field)
     */
     function revealField($field) {
       $field.text($field.data("mines")).data("revealed", true);
@@ -111,7 +112,8 @@
       }
     }
 
-    // Click on any field to reveal the number or the mine
+    // Click event on any field. It has to reveal a number, a mine, or all the empty
+    // fields around if it is an empty one itself
     $board.find("td").on("click", function() {
       var $field = $(this);
       if($field.data("mines") === 0) {
@@ -132,7 +134,7 @@
               f[n+1].push(g[l]);
             }
           }
-          console.log(JSON.stringify(f[n+1]));
+          console.log(JSON.stringify(f[n+1])); // debug
           n++;
         } while (f[n].length > 0);
 
@@ -141,7 +143,8 @@
     });
 
     /*
-     * Reveal all the fields around a given one and return the voids around
+     * Reveal all the 8 fields around a given one and return the empty fields around
+     * to continue the searching
      */
     function getVoidsAround($field) {
       // Get indices of the field
