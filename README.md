@@ -59,6 +59,15 @@ para cada celda
   si k sigue siendo 0 dejar la casilla en blanco
 ```
 
+### Implementación
+
+La forma de asignar un cierto dato a un elemento del DOM sin que el usuario lo pueda ver es mediante el método `.data()`, como ya hemos dicho antes. De este modo cada casilla tendrá dos posibles claves para el atributo *data*.
+
+clave | posibles valores | descripción
+:---: | :---: | ---
+revealed | *true* o *false* | Denota si el contenido de la celda ha sido mostrado al jugador o no.
+mines | número entero (0...8) | Número de minas que hay alrededor de una casilla. El 0 denota que se trata de una mina. Si está vacío o no existe significa que no hay minas alrededor.
+
 ## TO-DO LIST
 
 - Descripción del algoritmo para descubrir las celdas
