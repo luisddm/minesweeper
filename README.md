@@ -19,14 +19,14 @@ Es importante reseñar que todos los índices de las casillas y el tablero (y lo
 ```
 n = 0
 mientras n < núm de minas
-x = núm aleatorio entre 0 y xTablero-1
-y = núm aleatorio entre 0 y yTablero-1
+  x = núm aleatorio entre 0 y xTablero-1
+  y = núm aleatorio entre 0 y yTablero-1
 
-celda = localización del elemento del DOM que representa la celda en el tablero usando x e y
+  celda = localización del elemento del DOM que representa la celda en el tablero usando x e y
 
-si no hay una mina ya colocada en esta celda
-colocar aquí una mina
-incrementar n
+  si no hay una mina ya colocada en esta celda
+    colocar aquí una mina
+    incrementar n
 ```
 
 ### Colocación de los números
@@ -37,26 +37,26 @@ Debemos iterar cada una de las casillas del tablero, buscando una por una cuánt
 
 ```
 para cada celda
-k = 0
-si no hay una mina
-si la celda de su derecha existe y es una mina
-incrementar k
-si la celda de su izquierda existe y es una mina
-incrementar k
-si la celda superior existe y es una mina
-incrementar k
-si la celda inferior izquierda existe y es una mina
-incrementar k
-si la celda de la esquina superior derecha existe y es una mina
-incrementar k
-si la celda de la esquina superior izquierda existe y es una mina
-incrementar k
-si la celda de la esquina inferior derecha existe y es una mina
-incrementar k
-si la celda de la esquina inferior izquierda existe y es una mina
-incrementar k
-si k > 0 asignar este número a la celda
-si k sigue siendo 0 dejar la casilla en blanco
+  k = 0
+  si no hay una mina
+    si la celda de su derecha existe y es una mina
+      incrementar k
+    si la celda de su izquierda existe y es una mina
+      incrementar k
+    si la celda superior existe y es una mina
+      incrementar k
+    si la celda inferior izquierda existe y es una mina
+      incrementar k
+    si la celda de la esquina superior derecha existe y es una mina
+      incrementar k
+    si la celda de la esquina superior izquierda existe y es una mina
+      incrementar k
+    si la celda de la esquina inferior derecha existe y es una mina
+      incrementar k
+    si la celda de la esquina inferior izquierda existe y es una mina
+      incrementar k
+  si k > 0 asignar este número a la celda
+  si k sigue siendo 0 dejar la casilla en blanco
 ```
 
 ## TO-DO LIST
