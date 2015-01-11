@@ -19,7 +19,7 @@
       $time.text(+$time.text() + 1);
     }, 1000);
 
-    // Pupulate the board with mines in random positions
+    // Populate the board with mines in random positions
     while(n < nMines) {
       var x = randomNumber(boardSize);
       var y = randomNumber(boardSize);
@@ -72,7 +72,7 @@
       }
     }
 
-    // Reveal al the board (PROVISIONAL, only for debug purposes)
+    // Reveal all the board (PROVISIONAL, only for debug purposes)
     $("h1").on("click", function() {
       $board.find("td").each(function(index) {
         revealField($(this));
