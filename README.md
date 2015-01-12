@@ -2,7 +2,7 @@
 
 Esta es una implementación del clásico Buscaminas. A continuación una explicación del algoritmo tanto para situar las minas y los números que indican el número de minas alrededor como para descubrirlas en función de los eventos del jugador.
 
-**ATENCIÓN: esta versión del juego y de la documentación es preliminar y está en fase intensiva de desarrollo. Ver al final de este documento la lista de cosas por hacer.**
+**ATENCIÓN: esta versión del juego y de la documentación es preliminar y está en fase intensiva de desarrollo. Ver al final de este documento la lista de [cosas por hacer](#to-do-list).**
 
 ## Información general
 
