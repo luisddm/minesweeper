@@ -4,8 +4,7 @@
 
   $(document).ready(function(){
 
-    var fgColors = ["white", "blue", "green", "red", "darkblue", "brown", "cyan", "black", "gray"];
-    var bgColors = ["black", "#eee", "#eee", "#eee", "#eee", "#eee", "#eee", "#eee", "#eee"];
+    var cellStyle = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight"];
 
     var nMines = 10;
     var boardSize = 8;
@@ -93,6 +92,7 @@
       }
       $board.find("td").unbind("click");
       clearInterval(timer);
+      $(".message").addClass("visible");
     }
 
     /*
@@ -101,10 +101,7 @@
     function revealField($field) {
       $field.text($field.data("mines")).data("revealed", true);
       if(typeof $field.data("mines") != "undefined") {
-        $field.css({
-          "color": fgColors[$field.data("mines")],
-          "background-color": bgColors[$field.data("mines")]
-        });
+        $field.addClass(cellStyle[$field.data("mines")]);
       } else {
         $field.css({
           "background-color": "#eee"

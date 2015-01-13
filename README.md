@@ -106,7 +106,23 @@ En el caso de que hagamos click en una celda vacía, y a su vez haya celdas vac�
 - Usamos una función que recibe como entrada una celda, y devuelve un array con las coordenadas de las celdas vacías a su alrededor.
 
 ```
-algoritmo celdas vacías ayacentes [...]
+celdasVacias = array unidimensional
+si la celda de la derecha existe, es una celda vacía y está sin descubrir
+	añado sus coordenadas a celdasVacias
+si la celda de la izquierda existe, es una celda vacía y está sin descubrir
+	añado sus coordenadas a celdasVacias	
+si la celda superior existe, es una celda vacía y está sin descubrir
+	añado sus coordenadas a celdasVacias
+si la celda inferior existe, es una celda vacía y está sin descubrir
+	añado sus coordenadas a celdasVacias
+si la celda de la esquina superior derecha existe, es una celda vacía y está sin descubrir
+	añado sus coordenadas a celdasVacias
+si la celda de la esquina superior izquierda existe, es una celda vacía y está sin descubrir
+	añado sus coordenadas a celdasVacias
+si la celda de la esquina inferior derecha existe, es una celda vacía y está sin descubrir
+	añado sus coordenadas a celdasVacias
+si la celda de la esquina inferior izquierda existe, es una celda vacía y está sin descubrir
+	añado sus coordenadas a celdasVacias
 ```
 
 - Partimos de un array bidimiensional vacío f[]. Tras la primera iteración, almacenará las coordenadas de las celdas vacías a su alrededor en f[0][0...n].
@@ -115,7 +131,7 @@ algoritmo celdas vacías ayacentes [...]
 
 ## TO-DO LIST
 
-- Descripción del algoritmo para descubrir las celdas.
+- Descripción más detallada del algoritmo para descubrir las celdas.
 - Mejora de características de usabilidad (reiniciar juego, etc.).
 - Mejora de la hoja de estilos.
 - Implementación de el evento click derecho para marcar las celdas donde el jugador cree que hay una mina.
