@@ -1,71 +1,89 @@
-(function($) {
+/*jshint browser: true */
+/*global $*/
 
-  "use strict";
+  'use strict';
 
   $(document).ready(function(){
 
     var cellStyle = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight"];
 
-    var nMines = 10;
-    var boardSize = 8;
-    var n = 0, i = 0, j = 0;
+    var nMines = 10,
+        boardSize = 8,
+        timer;
 
-    var $board = $(".board");
-    var $time = $(".time");
+    var $board = $(".board"),
+        $time = $(".time"),
+        $message = $(".message");
 
-    // Start a counter in seconds
-    var timer = setInterval(function() {
-      $time.text(+$time.text() + 1);
-    }, 1000);
+    init();
 
-    // Populate the board with mines in random positions
-    while(n < nMines) {
-      var x = randomNumber(boardSize);
-      var y = randomNumber(boardSize);
+    $(".again").on("click", restart);
 
-      var $cell = $board.find("tr").eq(y).find("td").eq(x);
-
-      // Place a mine in the generated position only if there is no mine previously placed
-      if($cell.data("mines") !== 0) {
-        $cell.data("mines", 0);
-        n++;
-      }
+    function restart() {
+      $board.find("td").removeData("mines").removeData("revealed").text("").removeClass().removeAttr("style");
+      $message.removeClass("visible");
+      init();
     }
 
-    // For each field look all around searching for how many mines are, and set this
-    // number as a data value
-    for(i = 0; i < boardSize; i++) {
-      for(j = 0; j < boardSize; j++) {
-        var total = 0;
-        var $field = $board.find("tr").eq(i).find("td").eq(j);
-        $field.data("revealed", false);
-        if($field.data("mines") !== 0) {
-          if(i-1 >= 0 && j-1 >= 0) {
-            if($board.find("tr").eq(i-1).find("td").eq(j-1).data("mines") === 0) total++;
-          }
-          if(i-1 >= 0) {
-            if($board.find("tr").eq(i-1).find("td").eq(j).data("mines") === 0) total++;
-          }
-          if(i-1 >= 0 && j+1 <= boardSize) {
-            if($board.find("tr").eq(i-1).find("td").eq(j+1).data("mines") === 0) total++;
-          }
-          if(j-1 >= 0) {
-            if($board.find("tr").eq(i).find("td").eq(j-1).data("mines") === 0) total++;
-          }
-          if(j+1 <= boardSize) {
-            if($board.find("tr").eq(i).find("td").eq(j+1).data("mines") === 0) total++;
-          }
-          if(i+1 <= boardSize && j-1 >= 0) {
-            if($board.find("tr").eq(i+1).find("td").eq(j-1).data("mines") === 0) total++;
-          }
-          if(i+1 <= boardSize) {
-            if($board.find("tr").eq(i+1).find("td").eq(j).data("mines") === 0) total++;
-          }
-          if(i+1 <= boardSize && j+1 <= boardSize) {
-            if($board.find("tr").eq(i+1).find("td").eq(j+1).data("mines") === 0) total++;
-          }
-          if(total > 0){
-            $field.data("mines", total);
+    function init() {
+
+      var n = 0;
+
+      // Start a counter in seconds
+      $time.text("0");
+      timer = setInterval(function() {
+        $time.text(+$time.text() + 1);
+      }, 1000);
+
+      // Populate the board with mines in random positions
+      while(n < nMines) {
+        var x = randomNumber(boardSize);
+        var y = randomNumber(boardSize);
+
+        var $cell = $board.find("tr").eq(y).find("td").eq(x);
+
+        // Place a mine in the generated position only if there is no mine previously placed
+        if($cell.data("mines") !== 0) {
+          $cell.data("mines", 0);
+          n++;
+        }
+      }
+
+      // For each field look all around searching for how many mines are, and set this
+      // number as a data value
+      for(var i = 0; i < boardSize; i++) {
+        for(var j = 0; j < boardSize; j++) {
+          var total = 0;
+          var $field = $board.find("tr").eq(i).find("td").eq(j);
+          $field.data("revealed", false);
+          if($field.data("mines") !== 0) {
+            if(i-1 >= 0 && j-1 >= 0) {
+              if($board.find("tr").eq(i-1).find("td").eq(j-1).data("mines") === 0) total++;
+            }
+            if(i-1 >= 0) {
+              if($board.find("tr").eq(i-1).find("td").eq(j).data("mines") === 0) total++;
+            }
+            if(i-1 >= 0 && j+1 <= boardSize) {
+              if($board.find("tr").eq(i-1).find("td").eq(j+1).data("mines") === 0) total++;
+            }
+            if(j-1 >= 0) {
+              if($board.find("tr").eq(i).find("td").eq(j-1).data("mines") === 0) total++;
+            }
+            if(j+1 <= boardSize) {
+              if($board.find("tr").eq(i).find("td").eq(j+1).data("mines") === 0) total++;
+            }
+            if(i+1 <= boardSize && j-1 >= 0) {
+              if($board.find("tr").eq(i+1).find("td").eq(j-1).data("mines") === 0) total++;
+            }
+            if(i+1 <= boardSize) {
+              if($board.find("tr").eq(i+1).find("td").eq(j).data("mines") === 0) total++;
+            }
+            if(i+1 <= boardSize && j+1 <= boardSize) {
+              if($board.find("tr").eq(i+1).find("td").eq(j+1).data("mines") === 0) total++;
+            }
+            if(total > 0){
+              $field.data("mines", total);
+            }
           }
         }
       }
@@ -82,17 +100,17 @@
     * Reveal all the fields containing a mine
     */
     function revealAllMines() {
-      for(i = 0; i < boardSize; i++) {
-        for(j = 0; j < boardSize; j++) {
+      for(var i = 0; i < boardSize; i++) {
+        for(var j = 0; j < boardSize; j++) {
           var $field = $board.find("tr").eq(i).find("td").eq(j);
           if($field.data("mines") === 0) {
             revealField($field);
           }
         }
       }
-      $board.find("td").unbind("click");
+      //$board.find("td").unbind("click");
       clearInterval(timer);
-      $(".message").addClass("visible");
+      $message.addClass("visible");
     }
 
     /*
@@ -111,8 +129,10 @@
 
     // Click event on any field. It has to reveal a number, a mine, or all the empty
     // fields around if it is an empty one itself
-    $board.find("td").on("click", function() {
-      var $field = $(this);
+    $board.find("td").on("click", clickCell);
+
+    function clickCell(event) {
+      var $field = $(event.target);
       if($field.data("mines") === 0) {
         revealAllMines();
       } else if(typeof $field.data("mines") !== "undefined") {
@@ -131,13 +151,13 @@
               f[n+1].push(g[l]);
             }
           }
-          console.log(JSON.stringify(f[n+1])); // debug
+          window.console.log(JSON.stringify(f[n+1])); // debug
           n++;
         } while (f[n].length > 0);
 
       }
 
-    });
+    }
 
     /*
      * Reveal all the 8 fields around a given one and return the empty fields around
@@ -217,5 +237,3 @@
   function randomNumber(boardSize) {
     return Math.floor((Math.random() * boardSize));
   }
-
-})(jQuery);

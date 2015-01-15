@@ -11,9 +11,13 @@ body {
 
 .board {
   margin: 0 auto;
-  animation: mymove 1s;
+  animation: mymove 1s cubic-bezier(0.55, 0.16, 0.25, 1.27);
   border: 2px solid black;
   box-shadow: 3px 3px 10px 1px #888888;
+}
+
+.again {
+  margin-left: 25px;
 }
 
 h1, .sub {
@@ -29,7 +33,7 @@ h1, .sub {
   text-shadow: 0 0 20px white;
   &.visible {
     display: block;
-    animation: textmsg 1s;
+    animation: textmsg 1s cubic-bezier(0.5, 0.2, 0.3, 1.0);
   }
 }
 
@@ -105,7 +109,6 @@ td {
 
 @keyframes mymove {
   0%   {transform: scale(0)}
-  75%  {transform: scale(1.05)}
   100% {transform: scale(1)}
 }
 
