@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Minesweeper by luisddm</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Minesweeper</h1>
+        <h2>The classic game implemented with JQuery</h2>
+        <a href="https://github.com/luisddm/minesweeper" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a id="minesweeper-buscaminas" class="anchor" href="#minesweeper-buscaminas" aria-hidden="true"><span class="octicon octicon-link"></span></a>Minesweeper (Buscaminas)</h1>
+
+<p>Esta es una implementación del clásico Buscaminas. A continuación una explicación del algoritmo tanto para situar las minas y los números que indican el número de minas alrededor como para descubrirlas en función de los eventos del jugador.</p>
+
+<p>La versión actual se puede ver en funcionamiento en <a href="http://codepen.io/luisddm/pen/KwaLPv">Codepen</a>.</p>
+
+<p><strong>ATENCIÓN: esta versión del juego y de la documentación es preliminar y está en fase intensiva de desarrollo. Ver al final de este documento la lista de <a href="#to-do-list">cosas por hacer</a>.</strong></p>
+
+<h2>
+<a id="información-general" class="anchor" href="#informaci%C3%B3n-general" aria-hidden="true"><span class="octicon octicon-link"></span></a>Información general</h2>
+
+<p>Esta implementación se ha hecho utilizando algunas características interesantes de JQuery. La principal de ellas es aprovechar el método <a href="http://api.jquery.com/data/"><code>.data()</code></a> para almacenar datos arbitrarios en cualquier elemento del DOM. Usaremos esto para almacenar el cada casilla el estado actual de la misma.</p>
+
+<h2>
+<a id="generación-del-tablero" class="anchor" href="#generaci%C3%B3n-del-tablero" aria-hidden="true"><span class="octicon octicon-link"></span></a>Generación del tablero</h2>
+
+<p>A continuación se describe el proceso para generar el tablero de juego y dejarlo preparado para empezar a jugar.</p>
+
+<h3>
+<a id="colocación-de-las-minas" class="anchor" href="#colocaci%C3%B3n-de-las-minas" aria-hidden="true"><span class="octicon octicon-link"></span></a>Colocación de las minas</h3>
+
+<p>Necesitamos generar dos números aleatorios tantas veces como el número de minas que tengamos que colocar. Estos dos números indicarán la posición de la mina respecto a los ejes x e y. Si en la posición en cuestión no hay ninguna mina, la colocamos ahí e incrementamos el contador. Si ya hay una mina, ignoramos esta posición y dejamos el contador igual. Este proceso terminará cuando el contador alcance el número de minas a colocar.</p>
+
+<p>Es importante reseñar que todos los índices de las casillas y el tablero (y lo mismo para contadores de cualquier tipo) empiezan en 0 y acaban en <em>longitud-1</em>.</p>
+
+<pre><code>n = 0
+mientras n &lt; núm de minas
+    x = núm aleatorio entre 0 y xTablero-1
+    y = núm aleatorio entre 0 y yTablero-1
+
+    celda = localización del elemento del DOM que representa la celda en el tablero usando x e y
+
+    si no hay una mina ya colocada en esta celda
+        colocar aquí una mina
+        incrementar n
+</code></pre>
+
+<h3>
+<a id="colocación-de-los-números" class="anchor" href="#colocaci%C3%B3n-de-los-n%C3%BAmeros" aria-hidden="true"><span class="octicon octicon-link"></span></a>Colocación de los números</h3>
+
+<p>De lo que se trata aquí es de colocar en cada casilla que no tenga una mina un número que indique la cantidad de minas que hay a su alrededor. En principio se considerarán las ocho casillas circundantes, es decir, superior, inferior, derecha, izquierda y las cuatro esquinas.</p>
+
+<p>Debemos iterar cada una de las casillas del tablero, buscando una por una cuántas minas hay en sus ocho posiciones adyacentes. Este será el número que contendrá la casilla. Si no hay minas adyacentes, la casilla queda en blanco. Hay que tener cuidado, ya que una casilla situada en una esquina o un borde del tablero no tendrá ocho casillas adyacentes, sino tres o cinco, respectivamente.</p>
+
+<pre><code>para cada celda
+    k = 0
+    si no hay una mina
+        si la celda de la derecha existe y es una mina
+            incrementar k
+        si la celda de la izquierda existe y es una mina
+            incrementar k
+        si la celda superior existe y es una mina
+            incrementar k
+        si la celda inferior existe y es una mina
+            incrementar k
+        si la celda de la esquina superior derecha existe y es una mina
+            incrementar k
+        si la celda de la esquina superior izquierda existe y es una mina
+            incrementar k
+        si la celda de la esquina inferior derecha existe y es una mina
+            incrementar k
+        si la celda de la esquina inferior izquierda existe y es una mina
+            incrementar k
+    si k &gt; 0 asignar este número a la celda
+    si k sigue siendo 0 dejar la casilla en blanco
+</code></pre>
+
+<h3>
+<a id="implementación" class="anchor" href="#implementaci%C3%B3n" aria-hidden="true"><span class="octicon octicon-link"></span></a>Implementación</h3>
+
+<p>La forma de asignar un cierto dato a un elemento del DOM sin que el usuario lo pueda ver es mediante el método <code>.data()</code>, como ya hemos dicho antes. De este modo cada casilla tendrá dos posibles claves para el atributo <em>data</em>.</p>
+
+<table>
+<thead>
+<tr>
+<th align="center">clave</th>
+<th align="center">posibles valores</th>
+<th>descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">revealed</td>
+<td align="center">
+<em>true</em> o <em>false</em>
+</td>
+<td>Denota si el contenido de la celda ha sido mostrado al jugador o no.</td>
+</tr>
+<tr>
+<td align="center">mines</td>
+<td align="center">número entero (0...8)</td>
+<td>Número de minas que hay alrededor de una casilla. El 0 denota que se trata de una mina. Si está vacío o no existe significa que no hay minas alrededor.</td>
+</tr>
+</tbody>
+</table>
+
+<h2>
+<a id="descubrimiento-de-las-celdas" class="anchor" href="#descubrimiento-de-las-celdas" aria-hidden="true"><span class="octicon octicon-link"></span></a>Descubrimiento de las celdas</h2>
+
+<p>Una vez que el tablero está listo y con todos los elementos colocados, se procede a descubrir las casillas correspondientes por cada click del usuario.</p>
+
+<h3>
+<a id="click-en-una-celda" class="anchor" href="#click-en-una-celda" aria-hidden="true"><span class="octicon octicon-link"></span></a>Click en una celda</h3>
+
+<p>La única interacción real del jugador con el tablero es el click en una celda, luego debemos asignar un evento de tipo <em>onclick</em> a cada una de ellas. Una vez producido este evento, pueden ocurrir tres cosas distintas, en función de lo que contiene:</p>
+
+<ul>
+<li>Si se trata de una mina, el juego termina y el jugador pierde. Todas las minas del tablero aparecen en sus respectivas posiciones y éste queda bloqueado hasta el siguiente juego.</li>
+<li>Si se trata de un número, se muestra el número sin más.</li>
+<li>Si se trata de un espacio vacío es porque no hay ninguna mina en las celdas circundantes. Entonces se descubre el contenido de esta celda y también el de todas las adyacentes. Sin embargo, este caso es el más complicado, ya que si alguna de estas celdas es otro espacio vacío, también habrá que mostrar a su vez todas sus celdas circundantes, y así hasta que no quede ninguna celda vacía alrededor de las que se van mostrando.</li>
+</ul>
+
+<pre><code>click en celda
+   si es una mina
+      mostrar todas las minas
+      bloquear tablero
+   si es un número
+      mostrar este número
+   si es un espacio vacío
+      mostrar esta celda y todas las adyacentes, si están ocultas
+      si alguna celda adyacente está vacía
+         mostrar esta celda y todas las adyacentes, si están ocultas
+         ...
+            (hasta que no queden celdas vacías adyacentes sin mostrar)
+</code></pre>
+
+<h4>
+<a id="celda-vacía" class="anchor" href="#celda-vac%C3%ADa" aria-hidden="true"><span class="octicon octicon-link"></span></a>Celda vacía</h4>
+
+<p>En el caso de que hagamos click en una celda vacía, y a su vez haya celdas vacías a su alrededor, y así sucesivamente, debemos usar un algoritmo iterativo que es más complejo que un simple bucle. La técnica que usaremos aquí es la siguiente:</p>
+
+<ul>
+<li>Usamos una función que recibe como entrada una celda, y devuelve un array con las coordenadas de las celdas vacías a su alrededor.</li>
+</ul>
+
+<pre><code>celdasVacias = array unidimensional
+si la celda de la derecha existe, es una celda vacía y está sin descubrir
+    añado sus coordenadas a celdasVacias
+si la celda de la izquierda existe, es una celda vacía y está sin descubrir
+    añado sus coordenadas a celdasVacias   
+si la celda superior existe, es una celda vacía y está sin descubrir
+    añado sus coordenadas a celdasVacias
+si la celda inferior existe, es una celda vacía y está sin descubrir
+    añado sus coordenadas a celdasVacias
+si la celda de la esquina superior derecha existe, es una celda vacía y está sin descubrir
+    añado sus coordenadas a celdasVacias
+si la celda de la esquina superior izquierda existe, es una celda vacía y está sin descubrir
+    añado sus coordenadas a celdasVacias
+si la celda de la esquina inferior derecha existe, es una celda vacía y está sin descubrir
+    añado sus coordenadas a celdasVacias
+si la celda de la esquina inferior izquierda existe, es una celda vacía y está sin descubrir
+    añado sus coordenadas a celdasVacias
+</code></pre>
+
+<ul>
+<li>Partimos de un array bidimiensional vacío f[]. Tras la primera iteración, almacenará las coordenadas de las celdas vacías a su alrededor en f[0][0...n].</li>
+<li>Para cada una de estas celdas buscamos a su vez sus celdas adyacentes, siempre que no hayan sido descubiertas ya, y las almacenamos en f[1][0...n].</li>
+<li>Repetimos esto n veces hasta que el array resultante esté vacío.</li>
+</ul>
+
+<h2>
+<a id="to-do-list" class="anchor" href="#to-do-list" aria-hidden="true"><span class="octicon octicon-link"></span></a>TO-DO LIST</h2>
+
+<ul>
+<li>Descripción más detallada del algoritmo para descubrir las celdas.</li>
+<li>Mejora de características de usabilidad (reiniciar juego, etc.).</li>
+<li>Mejora de la hoja de estilos.</li>
+<li>Implementación de el evento click derecho para marcar las celdas donde el jugador cree que hay una mina.</li>
+<li>Reconocer la situación en la que el jugador ha ganado. Hasta ahora no existe el evento como tal.</li>
+<li>English version.</li>
+</ul>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/luisddm/minesweeper/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/luisddm/minesweeper/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/luisddm/minesweeper"></a> is maintained by <a href="https://github.com/luisddm">luisddm</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
